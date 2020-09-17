@@ -1,0 +1,10 @@
+{
+  "auth": {
+    "webvue898da27f": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
