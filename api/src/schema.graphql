@@ -1,0 +1,79 @@
+type User {
+   _id: Long!
+   createdAt: LocalDateTime
+   description: String
+   followersCount: Int
+   friendsCount: Int
+   id: Int!
+   isProtected: Boolean
+   location: String
+   name: String
+   profileImageURL: String
+   screenName: String!
+   tweetCount: Int
+   verified: Boolean
+   posts: [Tweet] @relation(name: "POSTS", direction: OUT)
+   follows: [User] @relation(name: "FOLLOWS", direction: OUT)
+   tweets: [Tweet] @relation(name: "MENTIONED", direction: IN)
+   top10Hashtags: [String] @cypher(statement: """
+   match (this)-[:POSTS]->()<-[p:TAGS]-(h) with h.name as hastag, count(p) as cnt order by cnt desc limit 10
+   return collect(hastag)
+   """)
+}
+
+type Hashtag {
+   _id: Long!
+   name: String!
+   tags: [Tweet] @relation(name: "TAGS", direction: OUT)
+}
+
+type Link {
+   _id: Long!
+   errorCode: Int
+   errorMessage: String
+   url: String!
+   links_to: [Url] @relation(name: "LINKS_TO", direction: OUT)
+   tweets: [Tweet] @relation(name: "CONTAINS", direction: IN)
+}
+
+type Url {
+   _id: Long!
+   url: String!
+   part_of: [Site] @relation(name: "PART_OF", direction: OUT)
+   links: [Link] @relation(name: "LINKS_TO", direction: IN)
+}
+
+type Site {
+   _id: Long!
+   name: String!
+   urls: [Url] @relation(name: "PART_OF", direction: IN)
+}
+
+type Tweet  {
+   _id: Long!
+   createdAt: LocalDateTime
+   favoriteCount: Int
+   id: Int!
+   isRetweet: Boolean
+   lang: String
+   retweetCount: Int
+   text: String
+   mentioned: [User] @relation(name: "MENTIONED", direction: OUT)
+   reply_to: [Tweet] @relation(name: "REPLY_TO", direction: OUT)
+   contains: [Link] @relation(name: "CONTAINS", direction: OUT)
+   retweets: [Tweet] @relation(name: "RETWEETS", direction: OUT)
+   quotes: [Tweet] @relation(name: "QUOTES", direction: OUT)
+   users: [User] @relation(name: "POSTS", direction: IN)
+   hashtags: [Hashtag] @relation(name: "TAGS", direction: IN)
+}
+
+type Query {
+   GetUser: [User]
+   GetHashtag: [Hashtag] @isAuthenticated
+}
+
+enum Role {
+   group1
+   group2
+   group3
+}

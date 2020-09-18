@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import AuthService from '../services/AuthService'
+import * as twitter from '@//store/modules/twitter'
 
 Vue.use(Vuex)
 
@@ -10,6 +11,9 @@ const initialState = user
   : { loggedIn: false, user: null }
 
 export default new Vuex.Store({
+  modules: {
+    twitter,
+  },
   state: {
     loggedIn: initialState.loggedIn,
     user: initialState.user,
@@ -41,13 +45,12 @@ export default new Vuex.Store({
     },
     login({ commit }, credentials) {
       return AuthService.login(credentials.username, credentials.password).then(
-        (cognosUser) => {
+        cognosUser => {
           commit('SET_USER_DATA', cognosUser.signInUserSession.idToken)
         }
       )
     },
   },
-  modules: {},
   getters: {
     loggedIn(state) {
       return state.loggedIn
