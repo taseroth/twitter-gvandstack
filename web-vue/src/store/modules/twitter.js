@@ -65,7 +65,7 @@ export const actions = {
     commit('SET_ERROR', null)
     return TwitterService.fetchTagsForUser(screenName).then(data => {
       console.log('tags:', data)
-      commit('SET_TAGS', data.data.GetUser[0].tags)
+      commit('SET_TAGS', data.data.GetUser[0].tagCounts)
     })
   },
 }

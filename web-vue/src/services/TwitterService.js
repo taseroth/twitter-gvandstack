@@ -109,7 +109,7 @@ export default {
       query: gql`
         query GetUser($screenName: String!) {
           GetUser(filter: { screenName: $screenName }) {
-            tags {
+            tagCounts {
               text
               value
             }
