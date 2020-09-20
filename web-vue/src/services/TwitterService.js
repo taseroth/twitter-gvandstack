@@ -22,7 +22,9 @@ const authLink = new ApolloLink((operation, forward) => {
 })
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false,
+  }),
 })
 export default {
   getUsers(description) {
@@ -30,6 +32,7 @@ export default {
       query: gql`
         query GetUser($desc: String!, $first: Int) {
           GetUser(first: $first, filter: { description_contains: $desc }) {
+            id
             name
             screenName
             description
@@ -39,12 +42,82 @@ export default {
               text
               retweetCount
             }
+            followersCount
+            friendsCount
           }
         }
       `,
       variables: {
         desc: description,
         first: 10,
+      },
+    })
+  },
+  fetchUserByScreenName(screenName) {
+    return client.query({
+      query: gql`
+        query GetUser($screenName: String!) {
+          GetUser(filter: { screenName: $screenName }) {
+            id
+            name
+            screenName
+            description
+            top10Hashtags
+            profileImageURL
+            followersCount
+            friendsCount
+            tweetCount
+            location
+          }
+        }
+      `,
+      variables: {
+        screenName: screenName,
+      },
+    })
+  },
+  fetchTweetsForUser(screenName) {
+    return client.query({
+      query: gql`
+        query GetUser($screenName: String!) {
+          GetUser(filter: { screenName: $screenName }) {
+            posts(first: 9, orderBy: id_desc) {
+              createdAt {
+                formatted
+              }
+              retweets {
+                users {
+                  name
+                  screenName
+                }
+              }
+              isRetweet
+              retweetCount
+              favoriteCount
+              text
+            }
+          }
+        }
+      `,
+      variables: {
+        screenName: screenName,
+      },
+    })
+  },
+  fetchTagsForUser(screenName) {
+    return client.query({
+      query: gql`
+        query GetUser($screenName: String!) {
+          GetUser(filter: { screenName: $screenName }) {
+            tags {
+              text
+              value
+            }
+          }
+        }
+      `,
+      variables: {
+        screenName: screenName,
       },
     })
   },

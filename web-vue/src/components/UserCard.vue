@@ -12,7 +12,6 @@
           {{ role }}
         </li>
       </ul>
-      <button v-on:click="test">Test</button>
       <div class="card-footer">
         <div class="card-footer-item">
           <button class="button is-primary" v-on:click="logout">
@@ -35,9 +34,6 @@ export default {
       this.$store.dispatch('logout').then(() => {
         this.$router.push({ name: 'login' })
       })
-    },
-    test: function() {
-      this.$store.dispatch('twitter/getUsersWithDescription', 'Neo4j')
     },
   },
 }
