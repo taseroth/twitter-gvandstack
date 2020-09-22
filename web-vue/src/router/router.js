@@ -23,12 +23,14 @@ const routes = [
     path: '/users',
     name: 'users',
     component: TwitterUsers,
+    meta: { requiresAuth: true },
   },
   {
     path: '/user/:screenName',
     name: 'user',
     component: TwitterUser,
     props: true,
+    meta: { requiresAuth: true },
   },
 ]
 
@@ -39,8 +41,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach((routeTo, routeFrom, next) => {
-  NProgress.start()
-  next()
+  const loggedIn = localStorage.getItem('user')
+  if (routeTo.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
+    next('/')
+  } else {
+    NProgress.start()
+    next()
+  }
 })
 
 router.afterEach(() => {

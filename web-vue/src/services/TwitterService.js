@@ -38,10 +38,6 @@ export default {
             description
             top10Hashtags
             profileImageURL
-            tweets(first: 10, orderBy: retweetCount_desc) {
-              text
-              retweetCount
-            }
             followersCount
             friendsCount
           }
@@ -109,6 +105,7 @@ export default {
       query: gql`
         query GetUser($screenName: String!) {
           GetUser(filter: { screenName: $screenName }) {
+            name
             tagCounts {
               text
               value
