@@ -6,7 +6,7 @@ type User {
    friendsCount: Int
    id: String!
    isProtected: Boolean
-   location: String
+   location: String @hasRole(roles:[group1])
    name: String
    profileImageURL: String
    screenName: String!
